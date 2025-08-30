@@ -1,5 +1,6 @@
 [tools]
 go = "1.25.0"
+golangci-lint = "latest"
 
 [env]
 _.file = ".env"
@@ -14,8 +15,8 @@ run = "gofmt -w ."
 dir = "go-bot"
 
 [tasks.lint]
-description = "Lint Go files using go vet"
-run = "go vet ./..."
+description = "Lint Go files using golangci-lint"
+run = "golangci-lint run"
 dir = "go-bot"
 
 [tasks.check]
