@@ -10,6 +10,11 @@ _.file = ".env"
 description = "lint and format markdowns"
 run = "npx markdownlint-cli2 --fix **/*.md"
 
+[tasks.dev]
+description = "Run the local development server"
+run = "go run ./cmd/local-server/"
+dir = "go-bot"
+
 [tasks.format]
 description = "Format Go files using gofmt"
 run = "gofmt -w ."
