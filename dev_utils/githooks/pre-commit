@@ -1,0 +1,6 @@
+#!/bin/sh
+# This hook script simply delegates the check logic to the task defined in mise.toml.
+set -e
+
+echo "Running pre-commit hook via 'mise run check'..."
+mise run check
