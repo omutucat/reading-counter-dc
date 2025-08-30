@@ -21,3 +21,8 @@ dir = "go-bot"
 [tasks.check]
 description = "Run all formatters and linters for the Go project"
 depends = ["format", "lint"]
+
+[tasks.register-commands]
+description = "Register slash commands with Discord"
+run = "go run ./cmd/register-commands/"
+dir = "go-bot"
