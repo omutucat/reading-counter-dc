@@ -6,7 +6,7 @@ import (
 	"os"
 
 	"github.com/bwmarrin/discordgo"
-	"reading-counter-dc/go-bot/internal/commands"
+	"github.com/omutucat/reading-counter-dc/go-bot/internal/commands"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module reading-counter-dc/go-bot
+module github.com/omutucat/reading-counter-dc/go-bot
 
 go 1.25.0
 
