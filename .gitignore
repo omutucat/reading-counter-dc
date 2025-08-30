@@ -1,0 +1,10 @@
+# Local environment variables. Contains sensitive credentials.
+.env
+
+# IDE-specific settings
+.idea/
+.vscode/
+
+# OS-generated files
+.DS_Store
+Thumbs.db

@@ -1,6 +1,9 @@
 [tools]
 go = "1.25.0"
 
+[env]
+_.file = ".env"
+
 [tasks.fmt-md]
 description = "lint and format markdowns"
 run = "npx markdownlint-cli2 --fix **/*.md"
