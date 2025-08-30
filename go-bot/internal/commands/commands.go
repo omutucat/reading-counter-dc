@@ -8,4 +8,8 @@ var All = []*discordgo.ApplicationCommand{
 		Name:        "ping",
 		Description: "Botの疎通確認をします",
 	},
+	{
+		Name:        "hello",
+		Description: "元気に挨拶をします！",
+	},
 }
