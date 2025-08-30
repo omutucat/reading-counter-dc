@@ -4,3 +4,17 @@ go = "1.25.0"
 [tasks.fmt-md]
 description = "lint and format markdowns"
 run = "npx markdownlint-cli2 --fix **/*.md"
+
+[tasks.format]
+description = "Format Go files using gofmt"
+run = "gofmt -w ."
+dir = "go-bot"
+
+[tasks.lint]
+description = "Lint Go files using go vet"
+run = "go vet ./..."
+dir = "go-bot"
+
+[tasks.check]
+description = "Run all formatters and linters for the Go project"
+depends = ["format", "lint"]
