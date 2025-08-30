@@ -1,0 +1,52 @@
+name: Register Discord Commands
+
+# ワークフローが実行されるタイミングを定義
+on:
+  push:
+    branches:
+      - main # mainブランチにpushされた時のみ
+    paths:
+      # コマンド定義、または登録スクリプト自体に変更があった場合のみ実行
+      - 'go-bot/internal/commands/**'
+      - 'go-bot/cmd/register-commands/**'
+
+jobs:
+  register-commands:
+    name: Register Slash Commands
+    runs-on: ubuntu-latest
+
+    # 環境変数を設定。GitHubのSecretsから値を読み込む
+    env:
+      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
+      DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
+
+    steps:
+      # 1. リポジトリのコードをチェックアウト
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Goの環境をセットアップ
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.0' # mise.tomlで指定したバージョンと合わせる
+
+      # 3. 依存関係をキャッシュして高速化 (任意)
+      - name: Cache Go modules
+        uses: actions/cache@v4
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      # 4. 依存関係をインストール
+      - name: Install dependencies
+        run: go mod download
+        working-directory: ./go-bot # go.modがあるディレクトリを指定
+
+      # 5. コマンド登録スクリプトを実行
+      - name: Run command registration script
+        run: go run ./cmd/register-commands/
+        working-directory: ./go-bot # スクリプトを実行するディレクトリを指定
