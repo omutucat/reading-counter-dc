@@ -8,6 +8,8 @@
 .
 ├── go-bot/
 │   ├── cmd/
+│   │   ├── local-server/
+│   │   │   └── main.go
 │   │   └── register-commands/
 │   │       └── main.go
 │   ├── internal/
@@ -38,6 +40,7 @@
 このディレクトリは、Go言語で実装されたDiscord Botのバックエンドに関する全てのソースコードを含みます。
 
 - `cmd/register-commands/main.go`: スラッシュコマンドをDiscordに登録するためのコマンドラインツールです。開発者がセットアップ時やコマンド変更時に一度だけ実行します。
+- `cmd/local-server/main.go`: Discordボットのローカル開発サーバーです。DiscordからのWebhookリクエストを処理するために、メインのボットのインタラクションハンドラを使用します。
 - `internal/commands/commands.go`: 全てのスラッシュコマンドの構造とプロパティを定義する内部パッケージです。コマンドの登録と実行の両方にとっての「信頼できる唯一の情報源」として機能します。
 - `function.go`: Google Cloud Functionsで動作するサーバーレス関数のエントリーポイントです。DiscordからのWebhookリクエストを受け取り、署名を検証し、対応するコマンドロジックを実行します。
 - `go.mod`, `go.sum`: Goモジュールの依存関係を管理するファイルです。
