@@ -1,4 +1,5 @@
 [tools]
+biome = "latest"
 gcloud = "latest"
 go = "1.25.0"
 golangci-lint = "latest"
@@ -11,24 +12,37 @@ _.file = ".env"
 description = "lint and format markdowns"
 run = "npx markdownlint-cli2 --fix **/*.md"
 
-[tasks.dev]
-description = "Run the local development server"
-run = "go run ./cmd/local-server/"
-dir = "go-bot"
-
-[tasks.format]
+[tasks.fmt-go]
 description = "Format Go files using gofmt"
 run = "gofmt -w ."
 dir = "go-bot"
 
-[tasks.lint]
+[tasks.lint-go]
 description = "Lint Go files using golangci-lint"
 run = "golangci-lint run"
 dir = "go-bot"
 
+[tasks.fmt-js]
+description = "Format JS files using Biome"
+run = "biome format --write ."
+dir = "gas-api"
+
+[tasks.lint-js]
+description = "Lint JS files using Biome"
+run = "biome lint ."
+dir = "gas-api"
+
+[tasks.format]
+description = "Run all formatters"
+depends = ["fmt-go", "fmt-js", "fmt-md"]
+
+[tasks.lint]
+description = "Run all linters"
+depends = ["lint-go", "lint-js"]
+
 [tasks.check]
-description = "Run all formatters and linters for the Go project"
-depends = ["format", "lint", "fmt-md"]
+description = "Run all formatters and linters for the project"
+depends = ["format", "lint"]
 
 [tasks.register-commands]
 description = "Register slash commands with Discord"
