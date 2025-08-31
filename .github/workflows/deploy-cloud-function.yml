@@ -1,0 +1,42 @@
+name: Deploy to Cloud Functions
+
+on:
+  push:
+    branches:
+      - main # mainブランチへのプッシュ時にトリガー
+    paths:
+      - 'go-bot/**' # go-botディレクトリ内の変更があった場合のみトリガー
+
+env:
+  ENTRY_POINT: HandleInteraction # 関数のエントリーポイントに置き換える
+  RUNTIME: go122 # Goのランタイムバージョンに置き換える
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Deploy Cloud Function
+        run: |
+          gcloud functions deploy ${{ secrets.FUNCTION_NAME }} \
+            --project=${{ secrets.GCP_PROJECT_ID }} \
+            --gen2 \
+            --runtime=${{ env.RUNTIME }} \
+            --region=${{ secrets.GCP_REGION }} \
+            --source=./go-bot \
+            --entry-point=${{ env.ENTRY_POINT }} \
+            --trigger-http \
+            --allow-unauthenticated \
+            --set-env-vars=DISCORD_APP_PUBLIC_KEY=${{ secrets.DISCORD_APP_PUBLIC_KEY }}
+        env:
+          DISCORD_APP_PUBLIC_KEY: ${{ secrets.DISCORD_APP_PUBLIC_KEY }}

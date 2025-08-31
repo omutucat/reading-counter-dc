@@ -4,6 +4,40 @@
 
 ## 1. Google Cloud サービスアカウントの作成とキーの生成
 
+このセクションの手順は、`dev_utils/setup-gcp-sa.sh` スクリプトを使用して自動化できます。
+スクリプトを実行する前に、`gcloud` CLI が認証されており、適切なプロジェクトが選択されていることを確認してください。
+
+```bash
+./dev_utils/setup-gcp-sa.sh
+```
+
+**スクリプトの実行内容:**
+
+このスクリプトを実行すると、以下の処理が自動的に行われます。
+
+1. **プロジェクトIDの取得:** 現在 `gcloud` CLI で設定されているプロジェクトIDを取得します。設定されていない場合はエラーで終了します。
+2. **サービスアカウントの作成:** `github-actions-deployer` という名前のサービスアカウントを作成します。既に存在する場合はスキップされます。
+3. **IAMロールの付与:** 作成したサービスアカウントに、Cloud Functions のデプロイに必要な以下のロールを付与します。
+    * `roles/cloudfunctions.developer`
+    * `roles/iam.serviceAccountUser`
+    * `roles/storage.objectViewer`
+    既にロールが付与されている場合はスキップされます。
+4. **JSONキーファイルの生成:** サービスアカウントの認証に使用する JSON キーファイルが、ホームディレクトリに `github-actions-key.json` として生成されます。同名のファイルが既に存在する場合は、上書きするかどうかを尋ねられます。
+
+**エラー処理:**
+
+* スクリプトは `set -e` を使用しているため、途中のコマンドでエラーが発生した場合、その時点でスクリプトの実行は停止します。
+* プロジェクトIDが設定されていない場合や、`gcloud` コマンドの実行に失敗した場合は、エラーメッセージが表示され、スクリプトは終了します。
+* キーファイルの生成時に既存のファイルを上書きしない選択をした場合、スクリプトはキー生成をスキップして終了します。
+
+**実行後の対応:**
+
+スクリプトが正常に完了したら、生成された `github-actions-key.json` ファイルの内容をコピーし、GitHub リポジトリのシークレット（例: `GCP_SA_KEY`）として追加してください。
+
+**セキュリティのため、GitHub Secrets に追加後、ローカルのキーファイルは必ず削除してください。**
+
+---
+
 GitHub Actions が Google Cloud Platform (GCP) に認証するために使用する
 サービスアカウントを作成し、その認証キーを生成します。
 
@@ -137,11 +171,17 @@ jobs:
           DISCORD_APP_PUBLIC_KEY: ${{ secrets.DISCORD_APP_PUBLIC_KEY }}
 ```
 
-### 4. 環境変数の設定とGitHub Secretsの確認
+### 4. GitHub Secrets の追加と設定
 
-* 上記の YAML ファイル内の `your-gcp-project-id` と `asia-northeast1` を
-  あなたの実際の GCP プロジェクト ID とデプロイしたいリージョンに置き換えます。
-* `DISCORD_APP_PUBLIC_KEY` は、手順 2 で GitHub Secrets に追加したものが使用されます。
+ワークフローで使用される以下のシークレットを GitHub リポジトリに追加する必要があります。
+
+* `GCP_SA_KEY`: Google Cloud サービスアカウントの JSON キーファイルの内容。
+* `DISCORD_APP_PUBLIC_KEY`: Discord アプリケーションの公開鍵。
+* `GCP_PROJECT_ID`: デプロイ先の Google Cloud プロジェクト ID。
+* `GCP_REGION`: Cloud Functions をデプロイするリージョン（例: `asia-northeast1`）。
+* `FUNCTION_NAME`: デプロイする Cloud Functions の関数名（例: `reading-counter-dc`）。
+
+これらのシークレットは、GitHub リポジトリの `Settings` -> `Secrets and variables` -> `Actions` から追加できます。
 
 これらの手順を実行し、`deploy-cloud-function.yml` ファイルを `main` ブランチにプッシュすると、
 以降の `main` ブランチへのマージ時に自動的に Cloud Functions へのデプロイが実行されるようになります。
