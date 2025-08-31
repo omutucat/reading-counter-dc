@@ -2,6 +2,7 @@
 gcloud = "latest"
 go = "1.25.0"
 golangci-lint = "latest"
+"npm:@google/clasp" = "latest"
 
 [env]
 _.file = ".env"
