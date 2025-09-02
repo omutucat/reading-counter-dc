@@ -1,0 +1,31 @@
+name: Deploy to Google Apps Script
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'gas-api/**'
+      - '.github/workflows/deploy-gas-api.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy-gas:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup mise
+        uses: jdx/mise-action@v2
+
+      - name: Create .clasprc.json from secret
+        run: printf '%s' '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Create .clasp.json from secret
+        run: printf '%s' '${{ secrets.CLASP_JSON }}' > gas-api/.clasp.json
+
+      - name: Deploy to Google Apps Script
+        working-directory: ./gas-api
+        run: |
+          clasp deploy --description "Auto-deployed from commit ${{ github.sha }}"
